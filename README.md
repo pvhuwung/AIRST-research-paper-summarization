@@ -12,7 +12,7 @@ Getting started is easy. Simply upload the research paper you wish to summarize,
 
 Our tool is designed to work with research papers from a variety of fields and disciplines, including but not limited to science, engineering, medicine, social sciences, and humanities. Whether you need to quickly understand the main findings of a paper for your own research or to communicate the highlights of a paper to your colleagues, our tool can help.
 
-Please note that while our tool is `highly accurate and reliable`, it is not intended to replace the need for reading and understanding the full paper(only able to summarize it). Our summarization is meant to provide a quick overview of the main ideas and findings presented in the paper, and should be used as a supplement to your own reading and analysis.
+Please note that while our tool is `highly accurate` and `reliable`, it is not intended to replace the need for reading and understanding the full paper(only able to summarize it). Our summarization is meant to provide a quick overview of the main ideas and findings presented in the paper, and should be used as a supplement to your own reading and analysis.
 
 We hope you find our research paper summarization tool useful and convenient!
 </p>
