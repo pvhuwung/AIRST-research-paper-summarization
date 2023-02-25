@@ -1,6 +1,6 @@
 # FinalFantasyXV-AIRST
 <br>
-<img height = "700" src = "https://user-images.githubusercontent.com/94454067/221368914-1cd39521-a34d-4338-bcc7-18999d20c5fa.png" />
+<img height = "500" src = "https://user-images.githubusercontent.com/94454067/221368914-1cd39521-a34d-4338-bcc7-18999d20c5fa.png" />
 </br>
 Welcome to our AI-powered research paper summarization tool!
 
