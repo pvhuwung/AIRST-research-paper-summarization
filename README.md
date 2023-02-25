@@ -2,7 +2,8 @@
 <br>
 <img height = "555" src = "https://user-images.githubusercontent.com/94454067/221368914-1cd39521-a34d-4338-bcc7-18999d20c5fa.png" />
 </br>
-<b>Welcome to our AI-powered research paper summarization tool!</b>
+<b>Welcome to our AI-powered research paper summarization tool!
+</b>
 
 This tool is designed to help you quickly and accurately summarize research papers. With just a few clicks, you can obtain a concise and informative summary of any research paper, saving you time and effort.
 
