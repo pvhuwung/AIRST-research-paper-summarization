@@ -21,5 +21,5 @@ pip install -r requirements.txt
 ```
 After succesfully install the required packages, run `streamlit run AIRST.py` in your terminal then everything should be working just fine!
 
-  We hope you have fun!
+  We hope you like it!
 </p>
