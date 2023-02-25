@@ -14,7 +14,7 @@ Our tool is designed to work with research papers from a variety of fields and d
 
 Please note that while our tool is `highly accurate` and `reliable`, it is not intended to replace the need for reading and understanding the full paper(only able to summarize it). Our summarization is meant to provide a quick overview of the main ideas and findings presented in the paper, and should be used as a supplement to your own reading and analysis.
 
-To run this AI application, git clone it to your machine and install the requirement package.
+To run this AI application, git clone the repository to your machine and install the requirement package.
 ```
 git clone https://github.com/pham0084/finalfantasyxv/
 pip install -r requirements.txt
