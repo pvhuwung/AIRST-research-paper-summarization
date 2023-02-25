@@ -19,6 +19,7 @@ To run this AI application, git clone it to your machine and install the require
 git clone https://github.com/pham0084/finalfantasyxv/
 pip install -r requirements.txt
 ```
-After succesfully install the required packages, use `streamlit run AIRST.py` then everything should be working just fine!
-We hope you have fun!
+After succesfully install the required packages, run `streamlit run AIRST.py` in your terminal then everything should be working just fine!
+
+  We hope you have fun!
 </p>
