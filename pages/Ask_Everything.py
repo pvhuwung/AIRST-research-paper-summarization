@@ -6,33 +6,43 @@ import openai
 openai.api_key = "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"
 
 # Define function to generate OpenAI answers
-def generate_answer(prompt, model):
-    response = openai.Completion.create(
-        engine=model,
-        prompt=prompt,
-        max_tokens=1024,
-        n=1,
-        stop=None,
-        temperature=0.7,
+def generate_response(prompt):
+    completions = openai.Completion.create(
+        engine = "text-davinci-003",
+        prompt = prompt,
+        max_tokens = 1024,
+        n = 1,
+        stop = None,
+        temperature = 0.5,
     )
-    answer = response.choices[0].text.strip()
-    return answer
+    message = completions.choices[0].text
+    return message #Creating the chatbot interface
 
-# Define Streamlit app
-def Ask_Everything():
-    st.title(':medical_symbol: :blue[AIRST] Question Answering Tool')
-    st.write('Welcome to our AIRST Question Answering Tool! Our app uses the latest AI technology from OpenAI to help you get quick and accurate answers to your questions.')
-    
-    # Define input prompt and model options
-    prompt = st.text_input('Enter your question:')
-    model = st.selectbox('Select an AI model:', ['davinci', 'curie', 'babbage', 'ada'])
-    
-    # Generate and display answer
-    if prompt:
-        answer = generate_answer(prompt, model)
-        st.write('Answer:')
-        st.write(answer)
 
+st.title(":male-doctor: :blue[AIRST] automated doctor")
+if 'generated' not in st.session_state:
+    st.session_state['generated'] = []
+
+if 'past' not in st.session_state:
+    st.session_state['past'] = []
+
+def get_text():
+    input_text = st.text_input("The Good Doctor: You can ask more than just medical related questions", key = "input")
+    return input_text
+
+user_input = get_text()
+
+if user_input:
+    output = generate_response(user_input)
+    st.session_state.past.append(user_input)
+    st.session_state.generated.append(output)
+
+if st.session_state['generated']:
+    for i in range(len(st.session_state['generated'])-1, -1, -1):
+        message(st.session_state["generated"][i], key=str(i))
+        message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
+
+        
 if __name__ == '__main__':
     Ask_Everything()
 
