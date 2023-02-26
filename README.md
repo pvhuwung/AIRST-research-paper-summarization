@@ -1,6 +1,6 @@
 # FinalFantasyXV-AIRST
 <br>
-<img height = "555" src = "https://user-images.githubusercontent.com/94454067/221368914-1cd39521-a34d-4338-bcc7-18999d20c5fa.png" />
+<img height = "555" src = "https://github.com/pham0084/finalfantasyxv/blob/main/Thumbnail.jpeg?raw=true" />
 
 <p>
   
