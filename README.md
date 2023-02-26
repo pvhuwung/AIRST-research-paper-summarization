@@ -1,6 +1,8 @@
 # FinalFantasyXV    -   AIRST 1.0
+
 <br>
-<img height = "555" src = "https://github.com/pham0084/finalfantasyxv/blob/main/Thumbnail.jpeg?raw=true" />
+
+![](https://raw.githubusercontent.com/pham0084/finalfantasyxv/main/Thumbnail.jpeg)
 
 <p>
   
@@ -31,26 +33,37 @@ Please note that while our tool is highly accurate and reliable, it is not inten
 
 
 ## Installation
+  
 1. Clone the repository
-```
-git clone https://github.com/pham0084/finalfantasyxv/
-```
+  
+    ```
+    git clone https://github.com/pham0084/finalfantasyxv.git
+    ```
+  
 2. Install the required packages
-```
-pip install -r requirements.txt
-```
+  
+    ```
+    pip install -r requirements.txt
+    ```
+  
 3. Run the app
-```
-streamlit run app.py
-```
+
+    ```
+    streamlit run app.py
+    ```
+  
 After succesfully install the required packages, run `streamlit run AIRST.py` in your terminal then everything should be working just fine!
 
-  We hope you like it!
+We hope you like it!
   
-  ## Usage
+## Usage
+  
 1. Upload a healthcare-related academic paper in PDF format
+  
 2. The app generates a summary of the key findings and conclusions of the paper using natural language processing techniques
+  
 3. Ask a health-related question, and the app will search the uploaded paper for relevant information to generate a concise answer based on the content of the paper
+  
 4. Use the feedback section to provide feedback on the accuracy and relevance of the generated summaries and answers
 
 ## Contributing
