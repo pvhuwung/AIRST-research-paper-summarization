@@ -6,10 +6,10 @@
   
 # Welcome to our AI-powered research paper summarization tool!
 
-This tool is designed to help you quickly and accurately summarize research papers. With just a few clicks, you can obtain a concise and informative summary of any research paper, saving you time and effort.
+Get concise and informative summaries of research papers with just a few clicks using our tool! Designed to save you time and effort, it accurately summarizes content-heavy papers and highlights the shortened main points. Say goodbye to lengthy reading and hello to efficient research!
 
 ## Getting started
-Getting started is easy. Simply upload the research paper you wish to summarize, and our AI algorithm will analyze and extract the most important information from the paper. Our algorithm uses advanced natural language processing techniques to identify the key concepts, ideas, and findings presented in the paper, and condenses them into a succinct and coherent summary.
+Getting started is easy. Simply upload the research paper you wish to summarize, and our AI algorithm will analyze and extract the most important information from the paper. Our algorithm uses advanced natural language processing techniques to identify the key concepts, ideas, and findings presented in the paper, and condenses them into a succinct and coherent summary presented in text. Users also have an options to get main points presented in pptx file, making visualisation more effective.
 
 Our tool is user-friendly and accessible to anyone who needs to understand research papers quickly and efficiently. Whether you're a student, researcher, or professional, our tool can help you save time and effort by providing you with a summary of the paper's main ideas and findings.
 
