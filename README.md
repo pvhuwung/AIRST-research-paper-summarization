@@ -1,4 +1,4 @@
-# FinalFantasyXV    -   AIRST 1.0
+# AIRST 1.0
 
 <br>
 
