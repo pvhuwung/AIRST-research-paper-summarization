@@ -1,4 +1,4 @@
-# FinalFantasyXV-AIRST-1.0
+# FinalFantasyXV    -   AIRST 1.0
 <br>
 <img height = "555" src = "https://github.com/pham0084/finalfantasyxv/blob/main/Thumbnail.jpeg?raw=true" />
 
