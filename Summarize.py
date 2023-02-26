@@ -1,4 +1,4 @@
-#import streamlit
+
 import openai
 import json
 import os
@@ -16,11 +16,14 @@ def Summarize(pdf_file_name):
 
     openai.api_key = OPENAI_API_KEY
 
-    # get docs file
-    doc = fitz.open('/Users/trongphan/Downloads/' + pdf_file_name + '.pdf')
+    # Get docs file
+    # Remember to channge the directory
+    doc = fitz.open('your directory' + pdf_file_name + '.pdf')
 
-    # get summarization text list
+    # Get summarization text list
     summary_list = []
+    
+    
     for page in doc:
         text = page.get_text("text")
         prompt = ("Summarize " + pdf_file_name +
@@ -35,7 +38,8 @@ def Summarize(pdf_file_name):
             presence_penalty=1
         )
         summary_list.append(response["choices"][0]["text"])
-    # print summarization of text
+        
+    # Print summarization of text
     summary_text = ' '.join(summary_list)
     return summary_text
 
@@ -47,8 +51,11 @@ def main():
 
     # Display a file uploader widget
     st.sidebar.title("Drag your Paper here for Summarization :')))")
+    
     uploaded_file = st.sidebar.file_uploader("", type="pdf")
     pdf_file_name = None
+    
+    # Check for the correct URI
     if uploaded_file is not None:
         pdf_file_name = uploaded_file.name.replace('.pdf', '')
 
@@ -56,8 +63,10 @@ def main():
     if pdf_file_name is not None:
         # Create a progress bar
         my_bar = st.progress(0)
+        
         # Start the summarization
         summary_text = Summarize(pdf_file_name)
+        
         # Update the progress bar
         my_bar.progress(100)
 
