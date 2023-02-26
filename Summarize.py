@@ -4,10 +4,11 @@ import json
 import os
 import fitz
 import streamlit as st
+import time
 
 
 def Summarize(pdf_file_name):
-    # Retrive Key
+    # Retrieve Key
     OPENAI_API_KEY = ''
     with open('/Users/trongphan/Desktop/hoho/OpenAI.json', 'r') as file_to_read:
         json_data = json.load(file_to_read)
@@ -18,13 +19,12 @@ def Summarize(pdf_file_name):
     # get docs file
     doc = fitz.open('/Users/trongphan/Downloads/' + pdf_file_name + '.pdf')
 
-    # get summartization text list
+    # get summarization text list
     summary_list = []
     for page in doc:
         text = page.get_text("text")
-        # print(text)
-        prompt = "Summarize" + pdf_file_name + "by this parts: Abstract Introduction Background or Related Work Methodology or Approach\
-            Results or Findings Discussion or Interpretation Conclusion or Summary"+text
+        prompt = ("Summarize " + pdf_file_name +
+                  " by Introduction " + text)
         response = openai.Completion.create(
             model="text-davinci-003",
             prompt=prompt,
@@ -40,5 +40,48 @@ def Summarize(pdf_file_name):
     return summary_text
 
 
-text = Summarize("Attention")
-st.write(text)
+def main():
+    # Set page title
+    st.set_page_config(page_title='Paper Summarization',
+                       page_icon=':memo:', layout='wide')
+
+    # Display a file uploader widget
+    st.sidebar.title("Drag your Paper here for Summarization :')))")
+    uploaded_file = st.sidebar.file_uploader("", type="pdf")
+    pdf_file_name = None
+    if uploaded_file is not None:
+        pdf_file_name = uploaded_file.name.replace('.pdf', '')
+
+    # Get the summarization
+    if pdf_file_name is not None:
+        # Create a progress bar
+        my_bar = st.progress(0)
+        # Start the summarization
+        summary_text = Summarize(pdf_file_name)
+        # Update the progress bar
+        my_bar.progress(100)
+
+        # Display the text content
+        st.title("Summarization")
+        st.write(summary_text)
+
+    # Ask Question
+    st.title("Ask a question")
+    s = st.text_input(
+        "Type something you want to ask about this paper summarization:")
+    if s:
+        prompt = s + " " + summary_text
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            temperature=0.7,
+            max_tokens=400,
+            top_p=0.9,
+            frequency_penalty=0.0,
+            presence_penalty=1
+        )
+        st.write(response["choices"][0]["text"])
+
+
+if __name__ == '__main__':
+    main()
