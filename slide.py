@@ -26,8 +26,8 @@ def generateslide(summary):
             listtext.append(listtext[-1]+senend)
         textframe.text = listtext[-1]
 
-s = '  % python slide.py\
-(airst % rm basic_presentation.pptx\ '
+s = '  % python slide.py\ (airst % rm basic_presentation.pptx\ '
 
 generateslide(s)
+
 prs.save('PDFtemplate.pptx')
