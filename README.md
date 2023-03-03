@@ -49,7 +49,7 @@ Please note that while our tool is highly accurate and reliable, it is not inten
 3. Run the app
 
     ```
-    streamlit run app.py
+    streamlit run AIRST.py
     ```
   
 After succesfully install the required packages, run `streamlit run AIRST.py` in your terminal then everything should be working just fine!
