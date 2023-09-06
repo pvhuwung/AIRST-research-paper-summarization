@@ -37,7 +37,7 @@ Please note that while our tool is highly accurate and reliable, it is not inten
 1. Clone the repository
   
     ```
-    git clone https://github.com/pham0084/finalfantasyxv.git
+    git clone https://github.com/pvhuwung/finalfantasyxv.git
     ```
   
 2. Install the required packages
