@@ -37,7 +37,7 @@ Please note that while our tool is highly accurate and reliable, it is not inten
 1. Clone the repository
   
     ```
-    git clone https://github.com/pvhuwung/finalfantasyxv.git
+    git clone https://github.com/Govind-Asawa/AI-PDF-Summarizer
     ```
   
 2. Install the required packages
@@ -49,7 +49,9 @@ Please note that while our tool is highly accurate and reliable, it is not inten
 3. Run the app
 
     ```
+    cd .\AIRST_RAG\
     streamlit run AIRST.py
+    
     ```
   
 After succesfully install the required packages, run `streamlit run AIRST.py` in your terminal then everything should be working just fine!

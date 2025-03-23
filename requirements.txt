@@ -1,3 +1,7 @@
- streamlit==1.19.0 
- openai==0.26.5 
- pymupdf==1.16.8
+streamlit
+PyMuPDF
+python-docx
+pdfplumber
+sentence-transformers
+chromadb
+requests
