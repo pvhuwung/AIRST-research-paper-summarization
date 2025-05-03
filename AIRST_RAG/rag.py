@@ -2,6 +2,13 @@ import os
 import uuid
 import json
 import requests
+
+# Prevent torch._classes scanning errors by replacing _classes with a benign namespace
+import torch
+import types
+if hasattr(torch, "_classes"):
+    torch._classes = types.SimpleNamespace()
+
 import streamlit as st
 from pathlib import Path
 
@@ -24,7 +31,6 @@ from chromadb import Client
 from chromadb.config import Settings
 
 # ---------- Global Setup ----------
-
 # Directory to save uploaded files
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -32,42 +38,38 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 # File for persistent mapping between original filename and unique filename
 PERSISTENCE_FILE = "processed_files.json"
 
-# Initialize the ChromaDB client with persistence using the new initialization
+# Initialize the ChromaDB client
 chroma_client = Client(Settings())
 
-# Load embedding model (adjust as needed)
+# Load embedding model
 embed_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 # ---------- Persistence Functions ----------
-
 def load_processed_files():
-    """Load the mapping from persistent storage."""
     if os.path.exists(PERSISTENCE_FILE):
         with open(PERSISTENCE_FILE, "r") as f:
             return json.load(f)
     return {}
 
 def save_processed_files(mapping):
-    """Save the mapping to persistent storage."""
     with open(PERSISTENCE_FILE, "w") as f:
         json.dump(mapping, f)
 
 # ---------- Helper Functions ----------
+def extract_text_from_pdf_pymupdf(file_path):
+    doc = fitz.open(file_path)
+    text = ""
+    for page in doc:
+        text += page.get_text("text") + "\n"
+    return text
 
 def extract_text_from_pdf(file_path):
-    """
-    Extract text from a PDF file.
-    If pdfplumber is available, use it to extract both the page text and tables.
-    Otherwise, fall back to PyMuPDF.
-    """
     full_text = ""
     if USE_PDFPLUMBER:
         try:
-            import pdfplumber
             with pdfplumber.open(file_path) as pdf:
                 for page in pdf.pages:
                     page_text = page.extract_text() or ""
-                    # Extract tables from the page, if any, and format them
                     table_text = ""
                     tables = page.extract_tables() or []
                     for table in tables:
@@ -81,32 +83,14 @@ def extract_text_from_pdf(file_path):
         full_text = extract_text_from_pdf_pymupdf(file_path)
     return full_text
 
-def extract_text_from_pdf_pymupdf(file_path):
-    """Fallback PDF text extraction using PyMuPDF."""
-    doc = fitz.open(file_path)
-    text = ""
-    for page in doc:
-        page_text = page.get_text("text")
-        text += page_text + "\n"
-    return text
-
 def extract_text_from_docx(file_path):
-    """Extract text from a DOCX file using python-docx."""
     doc = Document(file_path)
-    text = "\n".join([p.text for p in doc.paragraphs])
-    return text
+    return "\n".join([p.text for p in doc.paragraphs])
 
 def chunk_text_improved(text, max_chunk_chars=1000, overlap_chars=200):
-    """
-    Split the text into chunks by paragraphs.
-    The text is first split into paragraphs (based on double newlines),
-    then paragraphs are grouped together until reaching the max_chunk_chars limit.
-    An overlap of characters is added between consecutive chunks.
-    """
     paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
     chunks = []
     current_chunk = ""
-    
     for para in paragraphs:
         if len(current_chunk) + len(para) + 2 <= max_chunk_chars:
             current_chunk += para + "\n\n"
@@ -116,7 +100,6 @@ def chunk_text_improved(text, max_chunk_chars=1000, overlap_chars=200):
                 overlap = current_chunk[-overlap_chars:] if len(current_chunk) > overlap_chars else current_chunk
                 current_chunk = overlap + para + "\n\n"
             else:
-                # In case the paragraph itself is huge, split it
                 current_chunk = para[:max_chunk_chars]
                 chunks.append(current_chunk.strip())
                 current_chunk = para[max_chunk_chars:]
@@ -125,19 +108,12 @@ def chunk_text_improved(text, max_chunk_chars=1000, overlap_chars=200):
     return chunks
 
 def process_file(uploaded_file):
-    """
-    Save the uploaded file locally, extract its text (including tables),
-    chunk the text using the improved strategy, generate embeddings for each chunk,
-    and store them in a ChromaDB collection.
-    Returns the unique filename used as the collection name.
-    """
     file_extension = os.path.splitext(uploaded_file.name)[1]
     unique_filename = f"{uuid.uuid4().hex}{file_extension}"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
-    
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
-    
+
     if file_extension.lower() == ".pdf":
         text = extract_text_from_pdf(file_path)
     elif file_extension.lower() in [".doc", ".docx"]:
@@ -147,7 +123,7 @@ def process_file(uploaded_file):
         return None
 
     if not text.strip():
-        st.warning(f"No text could be extracted from {uploaded_file.name}. It may be a scanned PDF or in an unsupported format.")
+        st.warning(f"No text could be extracted from {uploaded_file.name}.")
         return None
 
     chunks = chunk_text_improved(text)
@@ -156,58 +132,45 @@ def process_file(uploaded_file):
         return None
 
     embeddings = embed_model.encode(chunks).tolist()
-    
     collection = chroma_client.create_collection(name=unique_filename)
-    
     doc_ids = [str(i) for i in range(len(chunks))]
     collection.add(documents=chunks, embeddings=embeddings, ids=doc_ids)
-    
     return unique_filename
 
 def delete_file(unique_filename):
-    """
-    Delete the file from the local folder and remove its collection from ChromaDB.
-    """
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
     if os.path.exists(file_path):
         os.remove(file_path)
-    
     try:
-        chroma_client.delete_collection(unique_filename)
+        chroma_client.delete_collection(name=unique_filename)
     except Exception as e:
         st.error(f"Error deleting collection: {e}")
 
 def search_documents(query, top_k=5):
-    """
-    Search across all document collections for chunks similar to the query.
-    Returns a list of tuples: (collection_name, document_chunk, distance)
-    """
     results = []
-    collection_names = chroma_client.list_collections()
-    for collection_name in collection_names:
+    try:
+        collections = chroma_client.list_collections()
+    except Exception as e:
+        st.error(f"Failed to list collections: {e}")
+        return results
+
+    for col in collections:
+        name = col.name
         try:
-            coll = chroma_client.get_collection(collection_name)
+            coll = chroma_client.get_collection(name=name)
             search_result = coll.query(query_texts=[query], n_results=top_k)
             for doc, distance in zip(search_result["documents"][0], search_result["distances"][0]):
-                results.append((collection_name, doc, distance))
+                results.append((name, doc, distance))
         except Exception as e:
-            st.error(f"Error querying collection {collection_name}: {e}")
-            continue
+            st.error(f"Error querying collection {name}: {e}")
     results.sort(key=lambda x: x[2])
     return results
 
 def call_llm(context, question):
-    """
-    Call the Qwen LLM API via OpenRouter.
-    The prompt instructs the model to answer solely using the provided context.
-    If the necessary details are not present in the context, the response should be:
-    "No relevant information found in the provided documents."
-    """
-    api_key = st.secrets.get("OPENROUTER_API_KEY", None)
+    api_key = st.secrets.get("OPENROUTER_API_KEY")
     if not api_key:
         st.error("OpenRouter API key not provided in secrets.")
         return "API Key Missing"
-    
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -215,37 +178,22 @@ def call_llm(context, question):
         "X-Title": st.secrets.get("SITE_NAME", "My Site"),
         "Content-Type": "application/json"
     }
-    
     message = (
         "You are an AI assistant that answers questions solely based on the provided context extracted from uploaded research papers. "
         "Answer the following question using only the information available in the context. "
-        "Do not incorporate any external knowledge or assumptions. "
         "If the provided context does not contain sufficient or relevant details to answer the question, "
         "respond exactly with: 'No relevant information found in the provided documents.'\n\n"
-        "Summarize the information in a meaningful way"
         f"Context:\n{context}\n\n"
-        "Question: " + question
+        f"Question: {question}"
     )
-    
-    data = {
-        "model": "qwen/qwq-32b:free",
-        "messages": [
-            {"role": "user", "content": message}
-        ]
-    }
-    
+    data = {"model": "qwen/qwq-32b:free", "messages": [{"role": "user", "content": message}]}
     response = requests.post(url, headers=headers, data=json.dumps(data))
-    
     if response.status_code == 200:
-        result = response.json()
         try:
-            answer = result["choices"][0]["message"]["content"]
+            return response.json()["choices"][0]["message"]["content"]
         except Exception:
-            answer = "Error parsing response from LLM."
-        return answer
-    else:
-        return f"Error from API: {response.status_code}, {response.text}"
-
+            return "Error parsing response from LLM."
+    return f"Error from API: {response.status_code}, {response.text}"
 
 # ---------- Streamlit Application ----------
 
