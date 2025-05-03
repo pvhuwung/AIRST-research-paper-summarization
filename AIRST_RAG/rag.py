@@ -3,7 +3,7 @@ import uuid
 import json
 import requests
 
-# Prevent torch._classes scanning errors by replacing _classes with a benign namespace
+# Ensure torch._classes is initialized to avoid AttributeError in some environments
 import torch
 import types
 if hasattr(torch, "_classes"):
@@ -16,7 +16,7 @@ from pathlib import Path
 import fitz  # PyMuPDF for PDF extraction
 from docx import Document  # for DOCX extraction
 
-# Try importing pdfplumber for improved table extraction
+# Importing pdfplumber for improved table extraction
 try:
     import pdfplumber
     USE_PDFPLUMBER = True
