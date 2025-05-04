@@ -275,10 +275,23 @@ def main():
             if not extracted_text.strip():
                 st.warning("No text could be extracted from the uploaded PDF.")
             else:
-                st.subheader("Summary")
                 chunks = chunk_text_improved(extracted_text)
-                summary = " ".join(chunks[:3])  # Summarize using the first few chunks
+                summary = call_llm(" ".join(chunks[:3]), "Summarize the content.")
+                st.subheader("Summary")
                 st.write(summary)
+                
+                #Chat with the PDF
+                st.subheader("Chat with the PDF")
+                chat_query = st.text_input("Ask a question about the uploaded PDF:")
+                if st.button("Get Answer", key="chat_pdf"):
+                    if chat_query:
+                        context = "\n\n".join(chunks[:5])  # Use the first few chunks as context
+                        answer = call_llm(context, chat_query)
+                        print(f'Answer: {answer}')
+                        st.write("**Answer:**")
+                        st.write(answer)
+                    else:
+                        st.warning("Please enter a question.")
 
 if __name__ == "__main__":
     main()
